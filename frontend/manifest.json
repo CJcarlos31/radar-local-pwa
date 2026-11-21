@@ -1,0 +1,9 @@
+{
+  "name": "Radar Local 3D",
+  "short_name": "RadarLocal",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#111111",
+  "icons": []
+}

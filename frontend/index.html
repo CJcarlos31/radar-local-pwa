@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#111111">
+    <title>Radar Local 3D</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="app-shell">
+        <header class="top-bar">
+            <h1 class="brand-logo">radar.</h1>
+            <div class="top-actions">
+                <button id="btn-gps-top" class="icon-circle" type="button" aria-label="Mi ubicación">◎</button>
+                <button id="btn-toggle-vista" class="icon-circle" type="button" aria-label="Cambiar a mapa">🗺</button>
+            </div>
+        </header>
+
+        <main id="vista-explorar" class="view-section active">
+            <div class="search-row">
+                <div class="search-pill">
+                    <span class="search-icon">⌕</span>
+                    <input id="input-busqueda" type="text" placeholder="Buscar sitios, cafés, entretenimiento...">
+                </div>
+                <button id="btn-abrir-radio" class="filter-btn" type="button" aria-label="Filtrar distancia">☰</button>
+            </div>
+
+            <div id="panel-radio" class="radius-panel hidden">
+                <div class="radius-header">
+                    <span>Distancia máxima desde tu GPS</span>
+                    <strong id="label-radio">5 km</strong>
+                </div>
+                <input id="slider-radio" type="range" min="1" max="30" step="1" value="5">
+            </div>
+
+            <div class="segmented-control">
+                <button id="seg-todos" class="seg-btn active" type="button">Todos</button>
+                <button id="seg-nuevos" class="seg-btn" type="button">Recién abiertos</button>
+            </div>
+
+            <section class="hero-banner">
+                <div class="hero-content">
+                    <span class="pill-badge">Nuevo en tu ciudad</span>
+                    <h2>Explora antes de salir</h2>
+                    <p>Recorre interiores reales en 360° o 3D con audio del ambiente antes de ir.</p>
+                    <button id="btn-hero-mapa" class="btn-dark" type="button">Ver mapa cercano</button>
+                </div>
+            </section>
+
+            <section class="categories-block">
+                <div class="section-head">
+                    <h3>Categorías</h3>
+                </div>
+                <div class="category-chips" id="lista-categorias">
+                    <button class="chip active" data-cat="todos" type="button">Todos</button>
+                    <button class="chip" data-cat="entretenimiento" type="button">Entretenimiento</button>
+                    <button class="chip" data-cat="cafes" type="button">Cafés</button>
+                    <button class="chip" data-cat="restaurantes" type="button">Restaurantes</button>
+                    <button class="chip" data-cat="miradores" type="button">Miradores</button>
+                </div>
+            </section>
+
+            <section class="places-block">
+                <div class="section-head">
+                    <h3>Cerca de ti</h3>
+                    <span id="contador-resultados" class="muted-label">0 lugares</span>
+                </div>
+                <div id="grid-lugares" class="places-grid"></div>
+            </section>
+        </main>
+
+        <section id="vista-mapa" class="view-section map-view">
+            <div id="google-map" class="map-canvas"></div>
+            <button id="btn-centrar-gps" class="gps-fab" type="button" aria-label="Centrar en mi ubicación">◎</button>
+            <div class="map-bottom-sheet">
+                <div class="sheet-handle"></div>
+                <div class="section-head">
+                    <h3>Lugares cercanos</h3>
+                    <span id="mapa-radio-badge" class="accent-link">Radio: 5 km</span>
+                </div>
+                <div id="carrusel-mapa" class="horizontal-cards"></div>
+            </div>
+        </section>
+
+        <section id="vista-detalle" class="detail-overlay hidden">
+            <div class="detail-media">
+                <div class="detail-top-controls">
+                    <button id="btn-cerrar-detalle" class="icon-circle" type="button">←</button>
+                    <div class="detail-right-controls">
+                        <button id="btn-audio-toggle" class="icon-circle" type="button">🔇</button>
+                        <button id="btn-modo-visor" class="pill-badge dark-pill" type="button">Modo Auto</button>
+                    </div>
+                </div>
+                <div id="visor-contenedor" class="viewer-stage"></div>
+            </div>
+
+            <div class="detail-sheet">
+                <div class="detail-header-row">
+                    <div>
+                        <span id="detalle-categoria" class="muted-label"></span>
+                        <h2 id="detalle-nombre"></h2>
+                    </div>
+                    <div class="detail-rating-box">
+                        <span id="detalle-rating" class="rating-text"></span>
+                        <strong id="detalle-distancia"></strong>
+                    </div>
+                </div>
+
+                <div class="vibe-pills">
+                    <span id="detalle-ambiente" class="chip active"></span>
+                    <span id="detalle-nuevo" class="chip"></span>
+                </div>
+
+                <h4>Descripción</h4>
+                <p id="detalle-descripcion" class="detail-desc"></p>
+
+                <div class="detail-cta-row">
+                    <a id="btn-ruta-gps" class="btn-outline" target="_blank" rel="noopener noreferrer">Cómo llegar (GPS)</a>
+                    <button id="btn-activar-audio-cta" class="btn-dark" type="button">Escuchar ambiente 3D</button>
+                </div>
+            </div>
+        </section>
+
+        <nav class="floating-nav">
+            <button class="nav-btn active" data-nav="explorar" type="button">⌂</button>
+            <button class="nav-btn" data-nav="mapa" type="button">⌖</button>
+            <button class="nav-btn" data-nav="nuevos" type="button">★</button>
+        </nav>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=TU_API_KEY_RESTRINGIDA&libraries=marker" async defer></script>
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
